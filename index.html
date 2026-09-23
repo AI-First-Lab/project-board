@@ -1263,14 +1263,12 @@ function renderBoardFooter(){
   const edited=p.updatedAt?Date.parse(p.updatedAt):0;
   const sheet=sheetUpdatedAt||0;
   const stamp=Math.max(edited||0,sheet||0);
-  const from = !stamp ? ''
-    : (edited>sheet ? `edited here${sheetDirty?' · not saved to the sheet yet':''}`
-                    : `sheet updated ${fmtStamp(stamp)}`);
+  /* only unsaved-edit state shows underneath; the sheet's own timestamp is not repeated here */
+  const from = edited>sheet ? `edited here${sheetDirty?' · not saved to the sheet yet':''}` : '';
 
   const head = curDate
     ? `<b>${esc(p.name)}</b> · last updated on <b>${fmtDate(curDate)}</b>`
     : `<b>${esc(p.name)}</b> · last updated on ${stamp?`<b>${fmtStamp(stamp)}</b>`:'not known'}`;
-  /* underneath: only where the data came from */
   const note = curDate
     ? from
     : (cur ? `${esc(cur)} has no date yet${from?` · ${from}`:''}`
@@ -1285,7 +1283,7 @@ function renderBoardFooter(){
     : `<span class="bf-sum">All ${p.releases.length} version${p.releases.length!==1?'s':''} · ${total} feature${total!==1?'s':''}</span>`;
 
   el.innerHTML=`<span class="bf-ic">${I.refresh}</span>
-    <span class="bf-tx">${head}<span class="bf-src">${note}</span></span>${sum}`;
+    <span class="bf-tx">${head}${note?`<span class="bf-src">${note}</span>`:''}</span>${sum}`;
 }
 
 /* ============================================================
